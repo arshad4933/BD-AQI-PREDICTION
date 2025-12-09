@@ -9,6 +9,9 @@ import pickle
 with open("aqi_lgbm_full_model.pkl", "rb") as f:
     model = pickle.load(f)
 
+# Training time feature columns
+feature_columns = ['TempC','Humidity','PM2.5','PM10','NO2 ppb','O3 ppb','CO ppm']
+
 # AQI Category bins
 bins = [0, 50, 100, 150, 200, 300, 1000]
 labels = ['Good','Moderate','Unhealthy SG','Unhealthy','Very Unhealthy','Hazardous']
@@ -30,7 +33,6 @@ def user_input_features():
     NO2 = st.sidebar.number_input("NO2 (ppb)", min_value=0.0, max_value=1000.0, value=40.0)
     O3 = st.sidebar.number_input("O3 (ppb)", min_value=0.0, max_value=500.0, value=30.0)
     CO = st.sidebar.number_input("CO (ppm)", min_value=0.0, max_value=50.0, value=1.0)
-    SO2 = st.sidebar.number_input("SO2 (ppb)", min_value=0.0, max_value=500.0, value=5.0)
     
     data = {
         'TempC': TempC,
@@ -39,12 +41,14 @@ def user_input_features():
         'PM10': PM10,
         'NO2 ppb': NO2,
         'O3 ppb': O3,
-        'CO ppm': CO,
-        'SO2 ppb': SO2
+        'CO ppm': CO
     }
     return pd.DataFrame([data])
 
 input_df = user_input_features()
+
+# Ensure correct column order for model
+input_df = input_df[feature_columns]
 
 # Predict AQI numeric value
 prediction = model.predict(input_df)[0]
