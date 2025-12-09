@@ -52,12 +52,16 @@ prediction = model.predict(input_df)[0]
 category = pd.cut([prediction], bins=bins, labels=labels)[0]
 suggestion = aqi_suggestions.get(category, "Be careful!")
 
+# Determine main pollutant (highest input value among pollutants)
+pollutant_columns = ['PM2.5','PM10','NO2 ppb','O3 ppb','CO ppm']
+main_pollutant = input_df[pollutant_columns].iloc[0].idxmax()
+
 # Gauge chart
 fig = go.Figure(go.Indicator(
     mode="gauge+number",
     value=prediction,
     domain={'x': [0, 1], 'y': [0, 1]},
-    title={'text': f"Main Pollutant AQI - {category}"},
+    title={'text': f"Main Pollutant - {main_pollutant}\nAQI Category: {category}"},
     gauge={
         'axis': {'range': [150, 500]},  # Start gauge at 150
         'bar': {'color': "red"},
