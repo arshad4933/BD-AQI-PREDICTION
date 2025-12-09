@@ -10,9 +10,9 @@ with open("aqi_lgbm_full_model.pkl", "rb") as f:
 
 feature_columns = ['TempC','Humidity','PM2.5','PM10','NO2 ppb','O3 ppb','CO ppm']
 
-# AQI Category bins
-bins = [0, 150, 200, 1000]
-labels = ['Unhealthy','Very Unhealthy','Hazardous']
+# AQI Category bins (only your desired ranges)
+bins = [150, 200, 300, 500]  # Start from 150
+labels = ['Unhealthy', 'Very Unhealthy', 'Hazardous']
 
 aqi_suggestions = {
     'Unhealthy': 'Avoid prolonged outdoor activities. Use mask if sensitive.',
@@ -59,12 +59,12 @@ fig = go.Figure(go.Indicator(
     domain={'x': [0, 1], 'y': [0, 1]},
     title={'text': f"Main Pollutant AQI - {category}"},
     gauge={
-        'axis': {'range': [0, 300]},
+        'axis': {'range': [150, 500]},  # Start gauge at 150
         'bar': {'color': "red"},
         'steps': [
-            {'range': [150, 200], 'color': "orange"},
-            {'range': [200, 300], 'color': "purple"},
-            {'range': [300, 500], 'color': "maroon"},
+            {'range': [150, 200], 'color': "orange"},      # Unhealthy
+            {'range': [200, 300], 'color': "purple"},      # Very Unhealthy
+            {'range': [300, 500], 'color': "maroon"},      # Hazardous
         ]
     }
 ))
